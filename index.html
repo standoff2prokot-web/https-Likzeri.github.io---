@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новинки ігор</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --text-color: #ffffff;
+            --accent-color: #5d6afb;
+            --secondary-accent: #a855f7;
+            --card-bg: #1e1e1e;
+            --header-bg: rgba(18, 18, 18, 0.9);
+        }
+
+        .light-theme {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --accent-color: #2196f3;
+            --secondary-accent: #00bcd4;
+            --card-bg: #f5f5f5;
+            --header-bg: rgba(255, 255, 255, 0.9);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--header-bg);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+        }
+
+        nav a:hover, nav a.active {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-input {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: 1px solid #555;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            width: 200px;
+        }
+
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: var(--card-bg);
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: none;
+            z-index: 10;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .search-suggestions.active {
+            display: block;
+        }
+
+        .search-suggestions div {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+        }
+
+        .search-suggestions div:hover {
+            background-color: var(--accent-color);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .account-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Main Content Styles */
+        main {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: calc(100vh - 200px);
+        }
+
+        .page-content {
+            display: none;
+        }
+
+        .page-content.active {
+            display: block;
+        }
+
+        .hero-banner {
+            background: linear-gradient(135deg, var(--accent-color), var(--secondary-accent));
+            border-radius: 10px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-banner p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .hero-btn {
+            background-color: white;
+            color: var(--accent-color);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            border: 1px solid #555;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            min-width: 150px;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .game-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .game-cover {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .game-info {
+            padding: 1rem;
+        }
+
+        .game-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .game-rating {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            color: gold;
+        }
+
+        .details-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal h2 {
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: var(--accent-color);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 4px;
+            border: 1px solid #555;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #555;
+            color: white;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        /* Game Page Styles */
+        .game-hero {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .game-cover-large {
+            flex: 1;
+            min-width: 300px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .game-cover-large img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .game-details {
+            flex: 2;
+            min-width: 300px;
+        }
+
+        .game-details h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-item {
+            background-color: var(--card-bg);
+            padding: 1rem;
+            border-radius: 5px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        .screenshots {
+            margin: 2rem 0;
+        }
+
+        .screenshot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .screenshot {
+            border-radius: 5px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .screenshot img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.3s;
+        }
+
+        .screenshot:hover img {
+            transform: scale(1.05);
+        }
+
+        .reviews {
+            margin: 2rem 0;
+        }
+
+        .review {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .review-author {
+            font-weight: bold;
+        }
+
+        .review-rating {
+            color: gold;
+        }
+
+        .back-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
+
+        /* Other Pages Styles */
+        .page-section {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .page-section h2 {
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .calendar-item {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .calendar-date {
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .news-item {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .news-date {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a {
+            color: var(--text-color);
+            text-decoration: none;
+        }
+
+        .footer-section a:hover {
+            color: var(--accent-color);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            font-size: 1.5rem;
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #555;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            nav ul {
+                margin: 1rem 0;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .header-controls {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .search-input {
+                width: 150px;
+            }
+
+            .hero-banner {
+                padding: 2rem 1rem;
+            }
+
+            .hero-banner h1 {
+                font-size: 2rem;
+            }
+
+            .filters {
+                justify-content: center;
+            }
+
+            .game-hero {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <a href="#" class="logo">🎮 GameHub</a>
+        <nav>
+            <ul>
+                <li><a href="#" class="nav-link active" data-page="home">🕹 Новинки</a></li>
+                <li><a href="#" class="nav-link" data-page="popular">⭐ Популярні</a></li>
+                <li><a href="#" class="nav-link" data-page="calendar">📅 Календар релізів</a></li>
+                <li><a href="#" class="nav-link" data-page="news">📰 Новини</a></li>
+                <li><a href="#" class="nav-link" data-page="forum">💬 Форум</a></li>
+            </ul>
+        </nav>
+        <div class="header-controls">
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="🔍 Пошук ігор...">
+                <div class="search-suggestions">
+                    <!-- Search suggestions will be populated by JavaScript -->
+                </div>
+            </div>
+            <button class="theme-toggle" id="themeToggle">🌙</button>
+            <button class="account-btn" id="accountBtn">👤 Вхід</button>
+        </div>
+    </header>
+
+    <!-- Login/Register Modal -->
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <h2 id="modalTitle">Вхід в акаунт</h2>
+            <form id="authForm">
+                <div class="form-group">
+                    <label for="username">Ім'я користувача:</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Пароль:</label>
+                    <input type="password" id="password" required>
+                </div>
+                <div class="form-group" id="emailGroup" style="display: none;">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="switchAuthMode">Реєстрація</button>
+                    <button type="submit" class="btn btn-primary">Увійти</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Content - Home Page -->
+    <main id="homePage" class="page-content active">
+        <section class="hero-banner">
+            <h1>Відкрийте для себе нові світи!</h1>
+            <p>Найсвіжіші ігрові релізи та очікувані новинки в одному місці</p>
+            <button class="hero-btn">Дізнатися більше</button>
+        </section>
+
+        <div class="filters">
+            <select class="filter-select" id="genreFilter">
+                <option value="">Всі жанри</option>
+                <option value="action">Екшн</option>
+                <option value="rpg">RPG</option>
+                <option value="strategy">Стратегії</option>
+                <option value="adventure">Пригоди</option>
+            </select>
+            <select class="filter-select" id="yearFilter">
+                <option value="">Всі роки</option>
+                <option value="2023">2023</option>
+                <option value="2022">2022</option>
+                <option value="2021">2021</option>
+            </select>
+            <select class="filter-select" id="platformFilter">
+                <option value="">Всі платформи</option>
+                <option value="pc">PC</option>
+                <option value="playstation">PlayStation</option>
+                <option value="xbox">Xbox</option>
+                <option value="nintendo">Nintendo</option>
+            </select>
+        </div>
+
+        <section class="top-new-games">
+            <h2>Топ новинок</h2>
+            <div class="games-grid" id="gamesGrid">
+                <!-- Game cards will be populated by JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Popular Games Page -->
+    <main id="popularPage" class="page-content">
+        <section class="page-section">
+            <h2>⭐ Популярні ігри</h2>
+            <p>Найпопулярніші ігри серед гравців за останній місяць.</p>
+            <div class="games-grid" id="popularGamesGrid">
+                <!-- Popular game cards will be populated by JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Calendar Page -->
+    <main id="calendarPage" class="page-content">
+        <section class="page-section">
+            <h2>📅 Календар релізів</h2>
+            <p>Заплановані релізи ігор на найближчі місяці.</p>
+            <div class="calendar-grid" id="calendarGrid">
+                <!-- Calendar items will be populated by JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <!-- News Page -->
+    <main id="newsPage" class="page-content">
+        <section class="page-section">
+            <h2>📰 Останні новини</h2>
+            <p>Свіжі новини зі світу відеоігор.</p>
+            <div class="news-grid" id="newsGrid">
+                <!-- News items will be populated by JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Forum Page -->
+    <main id="forumPage" class="page-content">
+        <section class="page-section">
+            <h2>💬 Форум / Обговорення</h2>
+            <p>Обговорюйте ігри з іншими гравцями.</p>
+            <div id="forumContent">
+                <p>Для участі в обговореннях необхідно увійти в акаунт.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Game Page -->
+    <main id="gamePage" class="page-content">
+        <button class="back-btn" id="backBtn">← Назад до списку</button>
+        
+        <section class="game-hero">
+            <div class="game-cover-large">
+                <img src="" alt="Game Cover" id="gameCoverLarge">
+            </div>
+            <div class="game-details">
+                <h1 id="gameTitle">Назва гри</h1>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Жанр:</span> <span id="gameGenre">Жанр</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Розробник:</span> <span id="gameDeveloper">Розробник</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Дата релізу:</span> <span id="gameReleaseDate">Дата</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Платформа:</span> <span id="gamePlatform">Платформа</span>
+                    </div>
+                </div>
+                <p id="gameDescription">Опис гри...</p>
+            </div>
+        </section>
+
+        <section class="screenshots">
+            <h2>Галерея скріншотів</h2>
+            <div class="screenshot-grid" id="screenshotGrid">
+                <!-- Screenshots will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <section class="reviews">
+            <h2>Відгуки гравців</h2>
+            <div id="reviewsContainer">
+                <!-- Reviews will be populated by JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Про нас</h3>
+                <p>GameHub - ваш провідник у світі відеоігор. Ми надаємо найсвіжішу інформацію про ігрові новинки, релізи та огляди.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Швидкі посилання</h3>
+                <ul>
+                    <li><a href="#" class="footer-nav" data-page="home">Головна</a></li>
+                    <li><a href="#" class="footer-nav" data-page="popular">Популярні ігри</a></li>
+                    <li><a href="#" class="footer-nav" data-page="calendar">Календар релізів</a></li>
+                    <li><a href="#" class="footer-nav" data-page="news">Новини</a></li>
+                    <li><a href="#" class="footer-nav" data-page="forum">Форум</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Контакти</h3>
+                <ul>
+                    <li>Email: info@gamehub.com</li>
+                    <li>Телефон: +380 12 345 6789</li>
+                    <li>Адреса: вул. Ігрова, 7, Київ, Україна</li>
+                </ul>
+                <div class="social-links">
+                    <a href="#">📘</a>
+                    <a href="#">📷</a>
+                    <a href="#">🐦</a>
+                    <a href="#">📺</a>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 GameHub. Усі права захищені.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Sample game data
+        const games = [
+            {
+                id: 1,
+        title: "GTA 6",
+        genre: "Екшн, Пригоди",
+        developer: "Rockstar Games",
+        releaseDate: "05.09.2025",
+        platform: "PC, PlayStation, Xbox",
+        rating: 4.9,
+        description: "Нова частина легендарної серії відкритого світу з масштабним Лос-Сантосом.",
+        cover: "https://via.placeholder.com/300x400/000000/ffffff?text=GTA+6",
+        screenshots: [
+            "https://via.placeholder.com/400x225/000000/ffffff?text=GTA+6+1",
+            "https://via.placeholder.com/400x225/111111/ffffff?text=GTA+6+2"
+        ],
+        reviews: [
+            { author: "Гравець1", rating: 5, text: "Неймовірна гра! Світ ще більш живий і реалістичний." }
+        ]
+    },
+    {
+        id: 2,
+        title: "Cyberpunk 2078",
+        genre: "RPG, Екшн",
+        developer: "CD Projekt Red",
+        releaseDate: "12.10.2025",
+        platform: "PC, PlayStation, Xbox",
+        rating: 4.7,
+        description: "Продолження культової RPG з новим сюжетом та мегакрутим світом.",
+        cover: "https://via.placeholder.com/300x400/ff0000/ffffff?text=Cyberpunk+2078",
+        screenshots: [
+            "https://via.placeholder.com/400x225/ff0000/ffffff?text=Screenshot+1",
+            "https://via.placeholder.com/400x225/cc0000/ffffff?text=Screenshot+2"
+        ],
+        reviews: [
+            { author: "КіберГеймер", rating: 5, text: "Футуристичний світ ще кращий, графіка неймовірна." }
+        ]
+    },
+    {
+        id: 3,
+        title: "The Elder Scrolls VI",
+        genre: "RPG, Пригоди",
+        developer: "Bethesda",
+        releaseDate: "15.11.2025",
+        platform: "PC, PlayStation, Xbox",
+        rating: 4.8,
+        description: "Нова епічна рольова гра в легендарному всесвіті Elder Scrolls.",
+        cover: "https://via.placeholder.com/300x400/00ff00/ffffff?text=TES+VI",
+        screenshots: [
+            "https://via.placeholder.com/400x225/00ff00/ffffff?text=Screenshot+1",
+            "https://via.placeholder.com/400x225/00cc00/ffffff?text=Screenshot+2"
+        ],
+        reviews: [
+            { author: "Дракон", rating: 5, text: "Неймовірна RPG, світ величезний та детальний." }
+        ]
+    },
+    {
+        id: 4,
+        title: "FIFA 25",
+        genre: "Спорт, Симулятор",
+        developer: "EA Sports",
+        releaseDate: "29.09.2025",
+        platform: "PC, PlayStation, Xbox",
+        rating: 4.6,
+        description: "Нова версія найпопулярнішого футбольного симулятора з оновленою фізикою та лігами.",
+        cover: "https://via.placeholder.com/300x400/0000ff/ffffff?text=FIFA+25",
+        screenshots: [
+            "https://via.placeholder.com/400x225/0000ff/ffffff?text=Screenshot+1",
+            "https://via.placeholder.com/400x225/0000cc/ffffff?text=Screenshot+2"
+        ],
+        reviews: [
+            { author: "Футболіст", rating: 4, text: "Гра стала ще реалістичнішою, круті ліги." }
+        ]
+    },
+    {
+        id: 5,
+        title: "Call of Duty: Future War",
+        genre: "Екшн, Шутер",
+        developer: "Activision",
+        releaseDate: "10.12.2025",
+        platform: "PC, PlayStation, Xbox",
+        rating: 4.7,
+        description: "Сучасний шутер із захоплюючим сюжетом та онлайн-режимом.",
+        cover: "https://via.placeholder.com/300x400/ff6600/ffffff?text=COD+Future+War",
+        screenshots: [
+            "https://via.placeholder.com/400x225/ff6600/ffffff?text=Screenshot+1",
+            "https://via.placeholder.com/400x225/ff5500/ffffff?text=Screenshot+2"
+        ],
+        reviews: [
+            { author: "Снайпер", rating: 5, text: "Класний шутер, грати з друзями – ще цікавіше!" }
+        ]
+    },
+    {
+        id: 6,
+        title: "Assassin's Creed: Valhalla 2",
+        genre: "Екшн, Пригоди",
+        developer: "Ubisoft",
+        releaseDate: "20.11.2025",
+        platform: "PC, PlayStation, Xbox",
+        rating: 4.8,
+        description: "Продовження історії в епоху вікінгів з новими локаціями та сюжетними лініями.",
+        cover: "https://via.placeholder.com/300x400/6600ff/ffffff?text=AC+Valhalla+2",
+        screenshots: [
+            "https://via.placeholder.com/400x225/6600ff/ffffff?text=Screenshot+1",
+            "https://via.placeholder.com/400x225/5500cc/ffffff?text=Screenshot+2"
+        ],
+        reviews: [
+            { author: "Вікінг", rating: 5, text: "Неймовірний сюжет, бойова система ще краща." }
+        ]
+    },
+    {
+        id: 7,
+        title: "Hogwarts Legacy 2",
+        genre: "RPG, Пригоди",
+        developer: "Portkey Games",
+        releaseDate: "01.12.2025",
+        platform: "PC, PlayStation, Xbox, Nintendo Switch",
+        rating: 4.9,
+        description: "Продовження пригод у світі Гаррі Поттера з новими закляттями та локаціями.",
+        cover: "https://via.placeholder.com/300x400/ff00ff/ffffff?text=Hogwarts+Legacy+2",
+        screenshots: [
+            "https://via.placeholder.com/400x225/ff00ff/ffffff?text=Screenshot+1",
+            "https://via.placeholder.com/400x225/cc00cc/ffffff?text=Screenshot+2"
+        ],
+        reviews: [
+            { author: "Чарівник", rating: 5, text: "Магія неймовірна, сюжет захоплюючий." }
+        ]
+    },
+    {
+        id: 8,
+        title: "Starfield 2",
+        genre: "RPG, Sci-Fi",
+        developer: "Bethesda",
+        releaseDate: "10.11.2025",
+        platform: "PC, Xbox",
+        rating: 4.7,
+        description: "Продовження космічної RPG з величезною галактикою та можливістю дослідження планет.",
+        cover: "https://via.placeholder.com/300x400/00ffff/ffffff?text=Starfield+2",
+        screenshots: [
+            "https://via.placeholder.com/400x225/00ffff/ffffff?text=Screenshot+1",
+            "https://via.placeholder.com/400x225/00cccc/ffffff?text=Screenshot+2"
+        ],
+        reviews: [
+            { author: "Космонавт", rating: 5, text: "Галактика величезна, відкриття постійно дивують." }
+        ]
+    },
+    {
+        id: 9,
+        title: "Resident Evil 9",
+        genre: "Хорор, Екшн",
+        developer: "Capcom",
+        releaseDate: "31.10.2025",
+        platform: "PC, PlayStation, Xbox",
+        rating: 4.6,
+        description: "Нова частина культового хорору з неймовірною атмосферою та сюжетом.",
+        cover: "https://via.placeholder.com/300x400/990000/ffffff?text=RE9",
+        screenshots: [
+            "https://via.placeholder.com/400x225/990000/ffffff?text=Screenshot+1",
+            "https://via.placeholder.com/400x225/880000/ffffff?text=Screenshot+2"
+        ],
+        reviews: [
+            { author: "ХорорГеймер", rating: 5, text: "Атмосфера неймовірна, лячно але цікаво." }
+        ]
+    },
+    {
+        id: 10,
+        title: "Battlefield 2143",
+        genre: "Шутер, Екшн",
+        developer: "EA DICE",
+        releaseDate: "15.11.2025",
+        platform: "PC, PlayStation, Xbox",
+        rating: 4.5,
+        description: "Масштабні битви майбутнього з сучасною графікою та технікою.",
+        cover: "https://via.placeholder.com/300x400/333333/ffffff?text=Battlefield+2143",
+        screenshots: [
+            "https://via.placeholder.com/400x225/333333/ffffff?text=Screenshot+1",
+            "https://via.placeholder.com/400x225/222222/ffffff?text=Screenshot+2"
+        ],
+        reviews: [
+            { author: "Солдат", rating: 4, text: "Гра дуже реалістична та динамічна." }
+        ]
+    },
+    // І ще 10 ігор можна додати аналогічно
+    {
+        id: 11, title: "Overwatch 2: Rebirth", genre: "Шутер, Командний", developer: "Blizzard", releaseDate: "05.10.2025", platform: "PC, PlayStation, Xbox", rating: 4.6, description: "Нове видання з героями та картами.", cover: "https://via.placeholder.com/300x400/ff9900/ffffff?text=Overwatch+2", screenshots: ["https://via.placeholder.com/400x225/ff9900/ffffff?text=1"], reviews: [{author: "Геймер", rating: 5, text: "Командна гра на вищому рівні."}] },
+    { id: 12, title: "Madden NFL 25", genre: "Спорт", developer: "EA Sports", releaseDate: "10.09.2025", platform: "PC, PlayStation, Xbox", rating: 4.4, description: "Футбольний симулятор американського футболу.", cover: "https://via.placeholder.com/300x400/0066ff/ffffff?text=Madden+NFL+25", screenshots: ["https://via.placeholder.com/400x225/0066ff/ffffff?text=1"], reviews: [{author: "Спортсмен", rating: 4, text: "Справжній американський футбол вдома."}] },
+    { id: 13, title: "Forza Horizon 8", genre: "Гонки", developer: "Playground Games", releaseDate: "20.09.2025", platform: "PC, Xbox", rating: 4.8, description: "Реалістичні гоночні перегони з відкритим світом.", cover: "https://via.placeholder.com/300x400/00cc99/ffffff?text=Forza+Horizon+8", screenshots: ["https://via.placeholder.com/400x225/00cc99/ffffff?text=1"], reviews: [{author: "Гонщик", rating: 5, text: "Вражаюча графіка і машини."}] },
+    { id: 14, title: "Elden Ring 2", genre: "RPG, Екшн", developer: "FromSoftware", releaseDate: "15.12.2025", platform: "PC, PlayStation, Xbox", rating: 4.9, description: "Продовження епічної RPG із відкритим світом.", cover: "https://via.placeholder.com/300x400/9900cc/ffffff?text=Elden+Ring+2", screenshots: ["https://via.placeholder.com/400x225/9900cc/ffffff?text=1"], reviews: [{author: "Воїн", rating: 5, text: "Величезний світ і складні боси!"}] },
+    { id: 15, title: "Halo Infinite: Legacy", genre: "Шутер, Sci-Fi", developer: "343 Industries", releaseDate: "01.11.2025", platform: "PC, Xbox", rating: 4.7, description: "Нова глава космічної саги Halo.", cover: "https://via.placeholder.com/300x400/006633/ffffff?text=Halo+Infinite", screenshots: ["https://via.placeholder.com/400x225/006633/ffffff?text=1"], reviews: [{author: "Спартанець", rating: 5, text: "Космічні битви на висоті!"}] },
+    { id: 16, title: "Mario Odyssey 2", genre: "Пригоди, Платформер", developer: "Nintendo", releaseDate: "10.10.2025", platform: "Nintendo Switch", rating: 4.8, description: "Нові пригоди Маріо з цікавими світами.", cover: "https://via.placeholder.com/300x400/ff6699/ffffff?text=Mario+Odyssey+2", screenshots: ["https://via.placeholder.com/400x225/ff6699/ffffff?text=1"], reviews: [{author: "Геймер", rating: 5, text: "Класичні пригоди з новим шармом!"}] },
+    { id: 17, title: "Legend of Zelda: Twilight", genre: "RPG, Пригоди", developer: "Nintendo", releaseDate: "15.09.2025", platform: "Nintendo Switch", rating: 4.9, description: "Продовження пригод Лінка у величезному світі.", cover: "https://via.placeholder.com/300x400/66ccff/ffffff?text=Zelda+Twilight", screenshots: ["https://via.placeholder.com/400x225/66ccff/ffffff?text=1"], reviews: [{author: "Мандрівник", rating: 5, text: "Світ величезний, пригоди неймовірні."}] },
+    { id: 18, title: "God of War: Ragnarok 2", genre: "Екшн, Пригоди", developer: "Santa Monica Studio", releaseDate: "20.12.2025", platform: "PC, PlayStation", rating: 4.9, description: "Продовження епічної саги про Кратоса.", cover: "https://via.placeholder.com/300x400/cc3300/ffffff?text=God+of+War+2", screenshots: ["https://via.placeholder.com/400x225/cc3300/ffffff?text=1"], reviews: [{author: "Воїн", rating: 5, text: "Сюжет та бойова система на висоті!"}] },
+    { id: 19, title: "Minecraft 2", genre: "Пісочниця, Пригоди", developer: "Mojang", releaseDate: "01.10.2025", platform: "PC, PlayStation, Xbox, Nintendo Switch", rating: 4.8, description: "Продовження культової пісочниці з новими можливостями.", cover: "https://via.placeholder.com/300x400/cccc00/ffffff?text=Minecraft+2", screenshots: ["https://via.placeholder.com/400x225/cccc00/ffffff?text=1"], reviews: [{author: "Будівельник", rating: 5, text: "Ще більше креативу та можливостей!"}] },
+    { id: 20, title: "Pokemon Universe", genre: "RPG, Пригоди", developer: "Game Freak", releaseDate: "15.11.2025", platform: "Nintendo Switch", rating: 4.7, description: "Нова Pokemon гра з величезним світом та покемонами.", cover: "https://via.placeholder.com/300x400/33cc33/ffffff?text=Pokemon+Universe", screenshots: ["https://via.placeholder.com/400x225/33cc33/ffffff?text=1"], reviews: [{author: "Тренер", rating: 5, text: "Новий світ покемонів – неймовірно!"}] 
+            }
+        ];
+
+        // Sample data for other pages
+        const popularGames = [
+            {
+                id: 4,
+                title: "Eternal Legends",
+                genre: "RPG",
+                developer: "Legendary Games",
+                releaseDate: "10.08.2023",
+                platform: "PC, PlayStation, Xbox, Nintendo Switch",
+                rating: 4.9,
+                description: "Епічна рольова гра з відкритим світом та захоплюючим сюжетом.",
+                cover: "https://via.placeholder.com/300x400/00bcd4/ffffff?text=Eternal+Legends"
+            },
+            {
+                id: 5,
+                title: "Racing Extreme",
+                genre: "Гонки",
+                developer: "Speed Studios",
+                releaseDate: "25.07.2023",
+                platform: "PC, PlayStation, Xbox",
+                rating: 4.7,
+                description: "Реалістичні гоночні перегони з деталізованими автомобілями та трасами.",
+                cover: "https://via.placeholder.com/300x400/2196f3/ffffff?text=Racing+Extreme"
+            }
+        ];
+
+        const calendarReleases = [
+            { date: "01.12.2023", title: "Adventure Quest", platform: "PC, PlayStation, Xbox" },
+            { date: "15.12.2023", title: "Mystic Worlds", platform: "PC, Nintendo Switch" },
+            { date: "05.01.2024", title: "Future Combat", platform: "PC, PlayStation, Xbox" },
+            { date: "20.01.2024", title: "Fantasy Kingdom", platform: "PC, PlayStation, Xbox, Nintendo Switch" }
+        ];
+
+        const newsItems = [
+            { date: "25.11.2023", title: "Нова гра від CD Projekt Red анонсована на 2024 рік", excerpt: "Популярний розробник анонсував новий проект у всесвіті Cyberpunk 2077." },
+            { date: "20.11.2023", title: "PlayStation 5 Pro очікують у 2024 році", excerpt: "Нова версія консолі матиме покращену продуктивність та графіку." },
+            { date: "15.11.2023", title: "Steam побив рекорд за кількістю одночасних користувачів", excerpt: "Платформа досягла позначки у 32 мільйони активних гравців." }
+        ];
+
+        // DOM Elements
+        const themeToggle = document.getElementById('themeToggle');
+        const searchInput = document.querySelector('.search-input');
+        const searchSuggestions = document.querySelector('.search-suggestions');
+        const gamesGrid = document.getElementById('gamesGrid');
+        const popularGamesGrid = document.getElementById('popularGamesGrid');
+        const calendarGrid = document.getElementById('calendarGrid');
+        const newsGrid = document.getElementById('newsGrid');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const footerNavs = document.querySelectorAll('.footer-nav');
+        const pages = document.querySelectorAll('.page-content');
+        const accountBtn = document.getElementById('accountBtn');
+        const authModal = document.getElementById('authModal');
+        const closeModal = document.getElementById('closeModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const authForm = document.getElementById('authForm');
+        const switchAuthMode = document.getElementById('switchAuthMode');
+        const emailGroup = document.getElementById('emailGroup');
+        const backBtn = document.getElementById('backBtn');
+        const genreFilter = document.getElementById('genreFilter');
+        const yearFilter = document.getElementById('yearFilter');
+        const platformFilter = document.getElementById('platformFilter');
+
+        // User state
+        let currentUser = null;
+        let isLoginMode = true;
+
+        // Theme Toggle
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            themeToggle.textContent = document.body.classList.contains('light-theme') ? '☀️' : '🌙';
+            
+            // Save theme preference
+            localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+        });
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-theme');
+            themeToggle.textContent = '☀️';
+        }
+
+        // Search functionality
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.toLowerCase();
+            if (query.length > 0) {
+                const filteredGames = games.filter(game => 
+                    game.title.toLowerCase().includes(query)
+                );
+                
+                searchSuggestions.innerHTML = '';
+                filteredGames.forEach(game => {
+                    const suggestion = document.createElement('div');
+                    suggestion.textContent = game.title;
+                    suggestion.addEventListener('click', () => {
+                        searchInput.value = game.title;
+                        searchSuggestions.classList.remove('active');
+                        showGamePage(game);
+                    });
+                    searchSuggestions.appendChild(suggestion);
+                });
+                
+                searchSuggestions.classList.add('active');
+            } else {
+                searchSuggestions.classList.remove('active');
+            }
+        });
+
+        // Close search suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-container')) {
+                searchSuggestions.classList.remove('active');
+            }
+        });
+
+        // Navigation
+        function navigateToPage(pageId) {
+            // Hide all pages
+            pages.forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Update active nav link
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === pageId.replace('Page', '').toLowerCase()) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const pageId = `${link.dataset.page}Page`;
+                navigateToPage(pageId);
+            });
+        });
+
+        footerNavs.forEach(nav => {
+            nav.addEventListener('click', (e) => {
+                e.preventDefault();
+                const pageId = `${nav.dataset.page}Page`;
+                navigateToPage(pageId);
+            });
+        });
+
+        // Account functionality
+        accountBtn.addEventListener('click', () => {
+            if (currentUser) {
+                // Logout
+                currentUser = null;
+                accountBtn.textContent = '👤 Вхід';
+                updateUIForUser();
+            } else {
+                // Show login modal
+                authModal.classList.add('active');
+            }
+        });
+
+        closeModal.addEventListener('click', () => {
+            authModal.classList.remove('active');
+        });
+
+        // Switch between login and register modes
+        switchAuthMode.addEventListener('click', () => {
+            isLoginMode = !isLoginMode;
+            if (isLoginMode) {
+                modalTitle.textContent = 'Вхід в акаунт';
+                switchAuthMode.textContent = 'Реєстрація';
+                emailGroup.style.display = 'none';
+                authForm.querySelector('button[type="submit"]').textContent = 'Увійти';
+            } else {
+                modalTitle.textContent = 'Реєстрація';
+                switchAuthMode.textContent = 'Вхід';
+                emailGroup.style.display = 'block';
+                authForm.querySelector('button[type="submit"]').textContent = 'Зареєструватися';
+            }
+        });
+
+        // Auth form submission
+        authForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const email = isLoginMode ? null : document.getElementById('email').value;
+            
+            // Simple validation
+            if (!username || !password) {
+                alert('Будь ласка, заповніть всі обов\'язкові поля');
+                return;
+            }
+            
+            if (!isLoginMode && !email) {
+                alert('Будь ласка, введіть email');
+                return;
+            }
+            
+            // Simulate authentication (in a real app, this would be a server request)
+            if (isLoginMode) {
+                // Login
+                currentUser = { username, email: 'user@example.com' }; // Simulated user
+                alert(`Вітаємо, ${username}! Ви успішно увійшли.`);
+            } else {
+                // Registration
+                currentUser = { username, email };
+                alert(`Вітаємо, ${username}! Ваш акаунт успішно створений.`);
+            }
+            
+            // Update UI
+            accountBtn.textContent = `👤 ${username}`;
+            authModal.classList.remove('active');
+            updateUIForUser();
+            
+            // Clear form
+            authForm.reset();
+        });
+
+        // Update UI based on user authentication
+        function updateUIForUser() {
+            const forumContent = document.getElementById('forumContent');
+            if (currentUser) {
+                forumContent.innerHTML = `
+                    <div class="forum-threads">
+                        <h3>Активні теми</h3>
+                        <div class="forum-thread">
+                            <h4>Обговорення Cyber Odyssey</h4>
+                            <p>Останнє повідомлення: сьогодні, 14:30</p>
+                        </div>
+                        <div class="forum-thread">
+                            <h4>Поради для новачків у Fantasy Realms</h4>
+                            <p>Останнє повідомлення: вчора, 20:15</p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                forumContent.innerHTML = '<p>Для участі в обговореннях необхідно увійти в акаунт.</p>';
+            }
+        }
+
+        // Back button
+        backBtn.addEventListener('click', () => {
+            navigateToPage('homePage');
+        });
+
+        // Filter functionality
+        function applyFilters() {
+            const genre = genreFilter.value;
+            const year = yearFilter.value;
+            const platform = platformFilter.value;
+            
+            const filteredGames = games.filter(game => {
+                return (!genre || game.genre.toLowerCase().includes(genre)) &&
+                       (!year || game.releaseDate.includes(year)) &&
+                       (!platform || game.platform.toLowerCase().includes(platform));
+            });
+            
+            renderGames(filteredGames, gamesGrid);
+        }
+
+        genreFilter.addEventListener('change', applyFilters);
+        yearFilter.addEventListener('change', applyFilters);
+        platformFilter.addEventListener('change', applyFilters);
+
+        // Render games
+        function renderGames(gamesToRender, container) {
+            container.innerHTML = '';
+            
+            gamesToRender.forEach(game => {
+                const gameCard = document.createElement('div');
+                gameCard.className = 'game-card';
+                gameCard.innerHTML = `
+                    <img src="${game.cover}" alt="${game.title}" class="game-cover">
+                    <div class="game-info">
+                        <h3 class="game-title">${game.title}</h3>
+                        <div class="game-rating">${'★'.repeat(Math.floor(game.rating))}${game.rating % 1 >= 0.5 ? '½' : ''} ${game.rating}</div>
+                        <button class="details-btn" data-id="${game.id}">Детальніше</button>
+                    </div>
+                `;
+                
+                container.appendChild(gameCard);
+            });
+            
+            // Add event listeners to detail buttons
+            container.querySelectorAll('.details-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const gameId = parseInt(btn.dataset.id);
+                    const game = games.find(g => g.id === gameId) || popularGames.find(g => g.id === gameId);
+                    showGamePage(game);
+                });
+            });
+        }
+
+        // Render calendar
+        function renderCalendar() {
+            calendarGrid.innerHTML = '';
+            
+            calendarReleases.forEach(release => {
+                const calendarItem = document.createElement('div');
+                calendarItem.className = 'calendar-item';
+                calendarItem.innerHTML = `
+                    <div class="calendar-date">${release.date}</div>
+                    <h3>${release.title}</h3>
+                    <p>Платформи: ${release.platform}</p>
+                `;
+                
+                calendarGrid.appendChild(calendarItem);
+            });
+        }
+
+        // Render news
+        function renderNews() {
+            newsGrid.innerHTML = '';
+            
+            newsItems.forEach(news => {
+                const newsItem = document.createElement('div');
+                newsItem.className = 'news-item';
+                newsItem.innerHTML = `
+                    <div class="news-date">${news.date}</div>
+                    <h3>${news.title}</h3>
+                    <p>${news.excerpt}</p>
+                    <a href="#" style="color: var(--accent-color);">Читати далі...</a>
+                `;
+                
+                newsGrid.appendChild(newsItem);
+            });
+        }
+
+        // Show game page
+        function showGamePage(game) {
+            // Update game page content
+            document.getElementById('gameCoverLarge').src = game.cover;
+            document.getElementById('gameTitle').textContent = game.title;
+            document.getElementById('gameGenre').textContent = game.genre;
+            document.getElementById('gameDeveloper').textContent = game.developer;
+            document.getElementById('gameReleaseDate').textContent = game.releaseDate;
+            document.getElementById('gamePlatform').textContent = game.platform;
+            document.getElementById('gameDescription').textContent = game.description;
+            
+            // Render screenshots
+            const screenshotGrid = document.getElementById('screenshotGrid');
+            screenshotGrid.innerHTML = '';
+            if (game.screenshots) {
+                game.screenshots.forEach(screenshot => {
+                    const screenshotElement = document.createElement('div');
+                    screenshotElement.className = 'screenshot';
+                    screenshotElement.innerHTML = `<img src="${screenshot}" alt="Screenshot">`;
+                    screenshotGrid.appendChild(screenshotElement);
+                });
+            }
+            
+            // Render reviews
+            const reviewsContainer = document.getElementById('reviewsContainer');
+            reviewsContainer.innerHTML = '';
+            if (game.reviews) {
+                game.reviews.forEach(review => {
+                    const reviewElement = document.createElement('div');
+                    reviewElement.className = 'review';
+                    reviewElement.innerHTML = `
+                        <div class="review-header">
+                            <span class="review-author">${review.author}</span>
+                            <span class="review-rating">${'★'.repeat(review.rating)}</span>
+                        </div>
+                        <p>${review.text}</p>
+                    `;
+                    reviewsContainer.appendChild(reviewElement);
+                });
+            }
+            
+            // Show game page
+            navigateToPage('gamePage');
+        }
+
+        // Initial render
+        renderGames(games, gamesGrid);
+        renderGames(popularGames, popularGamesGrid);
+        renderCalendar();
+        renderNews();
+    </script>
+</body>
+</html>
